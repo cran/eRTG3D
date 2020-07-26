@@ -1,44 +1,57 @@
 <!DOCTYPE html>
 
-<html xmlns="http://www.w3.org/1999/xhtml">
+<html>
 
 <head>
 
 <meta charset="utf-8" />
-<meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
 <meta name="generator" content="pandoc" />
 <meta http-equiv="X-UA-Compatible" content="IE=EDGE" />
 
-<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="viewport" content="width=device-width, initial-scale=1" />
 
 
 
 <title>Linkage to the sf package</title>
 
+<script>// Pandoc 2.9 adds attributes on both header and div. We remove the former (to
+// be compatible with the behavior of Pandoc < 2.8).
+document.addEventListener('DOMContentLoaded', function(e) {
+  var hs = document.querySelectorAll("div.section[class*='level'] > :first-child");
+  var i, h, a;
+  for (i = 0; i < hs.length; i++) {
+    h = hs[i];
+    if (!/^h[1-6]$/i.test(h.tagName)) continue;  // it should be a header h1-h6
+    a = h.attributes;
+    while (a.length > 0) h.removeAttribute(a[0].name);
+  }
+});
+</script>
 
 
 <style type="text/css">code{white-space: pre;}</style>
 <style type="text/css" data-origin="pandoc">
-a.sourceLine { display: inline-block; line-height: 1.25; }
-a.sourceLine { pointer-events: none; color: inherit; text-decoration: inherit; }
-a.sourceLine:empty { height: 1.2em; }
-.sourceCode { overflow: visible; }
-code.sourceCode { white-space: pre; position: relative; }
+pre > code.sourceCode { white-space: pre; position: relative; }
+pre > code.sourceCode > span { display: inline-block; line-height: 1.25; }
+pre > code.sourceCode > span:empty { height: 1.2em; }
+code.sourceCode > span { color: inherit; text-decoration: inherit; }
 div.sourceCode { margin: 1em 0; }
 pre.sourceCode { margin: 0; }
 @media screen {
 div.sourceCode { overflow: auto; }
 }
 @media print {
-code.sourceCode { white-space: pre-wrap; }
-a.sourceLine { text-indent: -1em; padding-left: 1em; }
+pre > code.sourceCode { white-space: pre-wrap; }
+pre > code.sourceCode > span { text-indent: -5em; padding-left: 5em; }
 }
-pre.numberSource a.sourceLine
-  { position: relative; left: -4em; }
-pre.numberSource a.sourceLine::before
-  { content: attr(data-line-number);
+pre.numberSource code
+  { counter-reset: source-line 0; }
+pre.numberSource code > span
+  { position: relative; left: -4em; counter-increment: source-line; }
+pre.numberSource code > span > a:first-child::before
+  { content: counter(source-line);
     position: relative; left: -1em; text-align: right; vertical-align: baseline;
-    border: none; pointer-events: all; display: inline-block;
+    border: none; display: inline-block;
     -webkit-touch-callout: none; -webkit-user-select: none;
     -khtml-user-select: none; -moz-user-select: none;
     -ms-user-select: none; user-select: none;
@@ -47,9 +60,9 @@ pre.numberSource a.sourceLine::before
   }
 pre.numberSource { margin-left: 3em; border-left: 1px solid #aaaaaa;  padding-left: 4px; }
 div.sourceCode
-  {  }
+  {   }
 @media screen {
-a.sourceLine::before { text-decoration: underline; }
+pre > code.sourceCode > span > a:first-child::before { text-decoration: underline; }
 }
 code span.al { color: #ff0000; font-weight: bold; } /* Alert */
 code span.an { color: #60a0b0; font-weight: bold; font-style: italic; } /* Annotation */
@@ -116,9 +129,6 @@ padding-right: 2em;
 font-family: "Open Sans", "Helvetica Neue", Helvetica, Arial, sans-serif;
 font-size: 14px;
 line-height: 1.35;
-}
-#header {
-text-align: center;
 }
 #TOC {
 clear: both;
@@ -287,7 +297,8 @@ code > span.st { color: #d14; }
 code > span.co { color: #888888; font-style: italic; } 
 code > span.ot { color: #007020; } 
 code > span.al { color: #ff0000; font-weight: bold; } 
-code > span.fu { color: #900; font-weight: bold; }  code > span.er { color: #a61717; background-color: #e3d2d2; } 
+code > span.fu { color: #900; font-weight: bold; } 
+code > span.er { color: #a61717; background-color: #e3d2d2; } 
 </style>
 
 
@@ -312,32 +323,32 @@ text-align: justify}
 <div id="convert-to-sf" class="section level2">
 <h2>Convert to sf</h2>
 <p>To convert tracks to a an object of type <code>sf, data.frame</code> use the <code>track2sf.3d()</code> function, which can take data.frames, matrices and move objects (containing one track!) as input. In case of data.frames and matrices, it is important that the coordinates are stored in the first three rows.</p>
-<div class="sourceCode" id="cb1"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb1-1" data-line-number="1">LV95 &lt;-<span class="st"> &quot;+init=epsg:2056&quot;</span></a>
-<a class="sourceLine" id="cb1-2" data-line-number="2">niclas &lt;-<span class="st"> </span><span class="kw">track2sf.3d</span>(niclas, <span class="dt">CRS =</span> LV95)</a>
-<a class="sourceLine" id="cb1-3" data-line-number="3"><span class="kw">is.sf.3d</span>(niclas)</a>
-<a class="sourceLine" id="cb1-4" data-line-number="4"><span class="co">#&gt; [1] TRUE</span></a>
-<a class="sourceLine" id="cb1-5" data-line-number="5"><span class="kw">head</span>(niclas, <span class="dv">3</span>)</a>
-<a class="sourceLine" id="cb1-6" data-line-number="6"><span class="co">#&gt; Simple feature collection with 3 features and 5 fields</span></a>
-<a class="sourceLine" id="cb1-7" data-line-number="7"><span class="co">#&gt; geometry type:  POINT</span></a>
-<a class="sourceLine" id="cb1-8" data-line-number="8"><span class="co">#&gt; dimension:      XYZ</span></a>
-<a class="sourceLine" id="cb1-9" data-line-number="9"><span class="co">#&gt; bbox:           xmin: 2556476 ymin: 1188336 xmax: 2560477 ymax: 1189861</span></a>
-<a class="sourceLine" id="cb1-10" data-line-number="10"><span class="co">#&gt; epsg (SRID):    2056</span></a>
-<a class="sourceLine" id="cb1-11" data-line-number="11"><span class="co">#&gt; proj4string:    +proj=somerc +lat_0=46.95240555555556 +lon_0=7.439583333333333 +k_0=1 +x_0=2600000 +y_0=1200000 +ellps=bessel +towgs84=674.374,15.056,405.346,0,0,0,0 +units=m +no_defs</span></a>
-<a class="sourceLine" id="cb1-12" data-line-number="12"><span class="co">#&gt;           a        g           t           l        d</span></a>
-<a class="sourceLine" id="cb1-13" data-line-number="13"><span class="co">#&gt; 1 0.3914766 1.557032          NA          NA       NA</span></a>
-<a class="sourceLine" id="cb1-14" data-line-number="14"><span class="co">#&gt; 2 0.4313395 1.537826  0.03986289 -0.01920514 2300.818</span></a>
-<a class="sourceLine" id="cb1-15" data-line-number="15"><span class="co">#&gt; 3 0.2866134 1.565712 -0.14472610  0.02788554 1993.003</span></a>
-<a class="sourceLine" id="cb1-16" data-line-number="16"><span class="co">#&gt;                         geometry</span></a>
-<a class="sourceLine" id="cb1-17" data-line-number="17"><span class="co">#&gt; 1 POINT Z (2556476 1188336 12...</span></a>
-<a class="sourceLine" id="cb1-18" data-line-number="18"><span class="co">#&gt; 2 POINT Z (2558565 1189297 13...</span></a>
-<a class="sourceLine" id="cb1-19" data-line-number="19"><span class="co">#&gt; 3 POINT Z (2560477 1189861 13...</span></a></code></pre></div>
+<div class="sourceCode" id="cb1"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb1-1"><a href="#cb1-1" aria-hidden="true"></a>LV95 &lt;-<span class="st"> &quot;+init=epsg:2056&quot;</span></span>
+<span id="cb1-2"><a href="#cb1-2" aria-hidden="true"></a>niclas &lt;-<span class="st"> </span><span class="kw">track2sf.3d</span>(niclas, <span class="dt">CRS =</span> LV95)</span>
+<span id="cb1-3"><a href="#cb1-3" aria-hidden="true"></a><span class="kw">is.sf.3d</span>(niclas)</span>
+<span id="cb1-4"><a href="#cb1-4" aria-hidden="true"></a><span class="co">#&gt; [1] TRUE</span></span>
+<span id="cb1-5"><a href="#cb1-5" aria-hidden="true"></a><span class="kw">head</span>(niclas, <span class="dv">3</span>)</span>
+<span id="cb1-6"><a href="#cb1-6" aria-hidden="true"></a><span class="co">#&gt; Simple feature collection with 3 features and 5 fields</span></span>
+<span id="cb1-7"><a href="#cb1-7" aria-hidden="true"></a><span class="co">#&gt; geometry type:  POINT</span></span>
+<span id="cb1-8"><a href="#cb1-8" aria-hidden="true"></a><span class="co">#&gt; dimension:      XYZ</span></span>
+<span id="cb1-9"><a href="#cb1-9" aria-hidden="true"></a><span class="co">#&gt; bbox:           xmin: 2556476 ymin: 1188336 xmax: 2560477 ymax: 1189861</span></span>
+<span id="cb1-10"><a href="#cb1-10" aria-hidden="true"></a><span class="co">#&gt; z_range:        zmin: 1283.736 zmax: 1369.713</span></span>
+<span id="cb1-11"><a href="#cb1-11" aria-hidden="true"></a><span class="co">#&gt; CRS:            +init=epsg:2056</span></span>
+<span id="cb1-12"><a href="#cb1-12" aria-hidden="true"></a><span class="co">#&gt;           a        g           t           l        d</span></span>
+<span id="cb1-13"><a href="#cb1-13" aria-hidden="true"></a><span class="co">#&gt; 1 0.3914766 1.557032          NA          NA       NA</span></span>
+<span id="cb1-14"><a href="#cb1-14" aria-hidden="true"></a><span class="co">#&gt; 2 0.4313395 1.537826  0.03986289 -0.01920514 2300.818</span></span>
+<span id="cb1-15"><a href="#cb1-15" aria-hidden="true"></a><span class="co">#&gt; 3 0.2866134 1.565712 -0.14472610  0.02788554 1993.003</span></span>
+<span id="cb1-16"><a href="#cb1-16" aria-hidden="true"></a><span class="co">#&gt;                         geometry</span></span>
+<span id="cb1-17"><a href="#cb1-17" aria-hidden="true"></a><span class="co">#&gt; 1 POINT Z (2556476 1188336 12...</span></span>
+<span id="cb1-18"><a href="#cb1-18" aria-hidden="true"></a><span class="co">#&gt; 2 POINT Z (2558565 1189297 13...</span></span>
+<span id="cb1-19"><a href="#cb1-19" aria-hidden="true"></a><span class="co">#&gt; 3 POINT Z (2560477 1189861 13...</span></span></code></pre></div>
 </div>
 <div id="convert-from-sf" class="section level2">
 <h2>Convert from sf</h2>
 <p>To test if a track is of type <code>sf, data.frame</code> use the <code>is.sf()</code> function, and to convert a <code>sf, data.frame</code> back to a track data.frame use <code>sf2df.3d()</code>.</p>
-<div class="sourceCode" id="cb2"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb2-1" data-line-number="1">niclas &lt;-<span class="st"> </span><span class="kw">sf2df.3d</span>(niclas)</a>
-<a class="sourceLine" id="cb2-2" data-line-number="2"><span class="kw">is.sf.3d</span>(niclas)</a>
-<a class="sourceLine" id="cb2-3" data-line-number="3"><span class="co">#&gt; [1] FALSE</span></a></code></pre></div>
+<div class="sourceCode" id="cb2"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb2-1"><a href="#cb2-1" aria-hidden="true"></a>niclas &lt;-<span class="st"> </span><span class="kw">sf2df.3d</span>(niclas)</span>
+<span id="cb2-2"><a href="#cb2-2" aria-hidden="true"></a><span class="kw">is.sf.3d</span>(niclas)</span>
+<span id="cb2-3"><a href="#cb2-3" aria-hidden="true"></a><span class="co">#&gt; [1] FALSE</span></span></code></pre></div>
 </div>
 
 

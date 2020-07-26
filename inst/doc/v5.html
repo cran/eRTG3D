@@ -1,44 +1,57 @@
 <!DOCTYPE html>
 
-<html xmlns="http://www.w3.org/1999/xhtml">
+<html>
 
 <head>
 
 <meta charset="utf-8" />
-<meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
 <meta name="generator" content="pandoc" />
 <meta http-equiv="X-UA-Compatible" content="IE=EDGE" />
 
-<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="viewport" content="width=device-width, initial-scale=1" />
 
 
 
 <title>Parallel computation</title>
 
+<script>// Pandoc 2.9 adds attributes on both header and div. We remove the former (to
+// be compatible with the behavior of Pandoc < 2.8).
+document.addEventListener('DOMContentLoaded', function(e) {
+  var hs = document.querySelectorAll("div.section[class*='level'] > :first-child");
+  var i, h, a;
+  for (i = 0; i < hs.length; i++) {
+    h = hs[i];
+    if (!/^h[1-6]$/i.test(h.tagName)) continue;  // it should be a header h1-h6
+    a = h.attributes;
+    while (a.length > 0) h.removeAttribute(a[0].name);
+  }
+});
+</script>
 
 
 <style type="text/css">code{white-space: pre;}</style>
 <style type="text/css" data-origin="pandoc">
-a.sourceLine { display: inline-block; line-height: 1.25; }
-a.sourceLine { pointer-events: none; color: inherit; text-decoration: inherit; }
-a.sourceLine:empty { height: 1.2em; }
-.sourceCode { overflow: visible; }
-code.sourceCode { white-space: pre; position: relative; }
+pre > code.sourceCode { white-space: pre; position: relative; }
+pre > code.sourceCode > span { display: inline-block; line-height: 1.25; }
+pre > code.sourceCode > span:empty { height: 1.2em; }
+code.sourceCode > span { color: inherit; text-decoration: inherit; }
 div.sourceCode { margin: 1em 0; }
 pre.sourceCode { margin: 0; }
 @media screen {
 div.sourceCode { overflow: auto; }
 }
 @media print {
-code.sourceCode { white-space: pre-wrap; }
-a.sourceLine { text-indent: -1em; padding-left: 1em; }
+pre > code.sourceCode { white-space: pre-wrap; }
+pre > code.sourceCode > span { text-indent: -5em; padding-left: 5em; }
 }
-pre.numberSource a.sourceLine
-  { position: relative; left: -4em; }
-pre.numberSource a.sourceLine::before
-  { content: attr(data-line-number);
+pre.numberSource code
+  { counter-reset: source-line 0; }
+pre.numberSource code > span
+  { position: relative; left: -4em; counter-increment: source-line; }
+pre.numberSource code > span > a:first-child::before
+  { content: counter(source-line);
     position: relative; left: -1em; text-align: right; vertical-align: baseline;
-    border: none; pointer-events: all; display: inline-block;
+    border: none; display: inline-block;
     -webkit-touch-callout: none; -webkit-user-select: none;
     -khtml-user-select: none; -moz-user-select: none;
     -ms-user-select: none; user-select: none;
@@ -47,9 +60,9 @@ pre.numberSource a.sourceLine::before
   }
 pre.numberSource { margin-left: 3em; border-left: 1px solid #aaaaaa;  padding-left: 4px; }
 div.sourceCode
-  {  }
+  {   }
 @media screen {
-a.sourceLine::before { text-decoration: underline; }
+pre > code.sourceCode > span > a:first-child::before { text-decoration: underline; }
 }
 code span.al { color: #ff0000; font-weight: bold; } /* Alert */
 code span.an { color: #60a0b0; font-weight: bold; font-style: italic; } /* Annotation */
@@ -116,9 +129,6 @@ padding-right: 2em;
 font-family: "Open Sans", "Helvetica Neue", Helvetica, Arial, sans-serif;
 font-size: 14px;
 line-height: 1.35;
-}
-#header {
-text-align: center;
 }
 #TOC {
 clear: both;
@@ -287,7 +297,8 @@ code > span.st { color: #d14; }
 code > span.co { color: #888888; font-style: italic; } 
 code > span.ot { color: #007020; } 
 code > span.al { color: #ff0000; font-weight: bold; } 
-code > span.fu { color: #900; font-weight: bold; }  code > span.er { color: #a61717; background-color: #e3d2d2; } 
+code > span.fu { color: #900; font-weight: bold; } 
+code > span.er { color: #a61717; background-color: #e3d2d2; } 
 </style>
 
 
@@ -311,18 +322,18 @@ text-align: justify}
 <p>The computationally most intense functions <code>qProb.3d()</code>, <code>n.sim.cond.3d()</code> and <code>reproduce.track.3d()</code> of the package are also implemented in a parallel version. On Unix systems this is done using a fork cluster. On Windows systems PSOCK cluster is used.</p>
 <p>Definition of start conditions and parameters:</p>
 <p>Get movement characteristics (<code>P</code>) from the example trajectory and simulate a Unconditional Eprircal Random Walk (UERW) in order to extract the attraction term (<code>Q</code>):</p>
-<div class="sourceCode" id="cb1"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb1-1" data-line-number="1">P &lt;-<span class="st"> </span><span class="kw">get.track.densities.3d</span>(niclas, <span class="dt">heightDistEllipsoid =</span> <span class="ot">TRUE</span>, <span class="dt">DEM =</span> dem)</a>
-<a class="sourceLine" id="cb1-2" data-line-number="2">uerw &lt;-<span class="st"> </span><span class="kw">sim.uncond.3d</span>(sim.locs<span class="op">*</span>f, <span class="dt">start =</span> <span class="kw">c</span>(niclas<span class="op">$</span>x[<span class="dv">1</span>], niclas<span class="op">$</span>y[<span class="dv">1</span>], niclas<span class="op">$</span>z[<span class="dv">1</span>]), </a>
-<a class="sourceLine" id="cb1-3" data-line-number="3">                      <span class="dt">a0 =</span> a0, <span class="dt">g0 =</span> g0, <span class="dt">densities =</span> P)</a></code></pre></div>
+<div class="sourceCode" id="cb1"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb1-1"><a href="#cb1-1" aria-hidden="true"></a>P &lt;-<span class="st"> </span><span class="kw">get.track.densities.3d</span>(niclas, <span class="dt">heightDistEllipsoid =</span> <span class="ot">TRUE</span>, <span class="dt">DEM =</span> dem)</span>
+<span id="cb1-2"><a href="#cb1-2" aria-hidden="true"></a>uerw &lt;-<span class="st"> </span><span class="kw">sim.uncond.3d</span>(sim.locs<span class="op">*</span>f, <span class="dt">start =</span> <span class="kw">c</span>(niclas<span class="op">$</span>x[<span class="dv">1</span>], niclas<span class="op">$</span>y[<span class="dv">1</span>], niclas<span class="op">$</span>z[<span class="dv">1</span>]), </span>
+<span id="cb1-3"><a href="#cb1-3" aria-hidden="true"></a>                      <span class="dt">a0 =</span> a0, <span class="dt">g0 =</span> g0, <span class="dt">densities =</span> P)</span></code></pre></div>
 <p>The parallel version of the <code>qProb.3d()</code> function can be accessed by setting the parameter <code>parallel = TRUE</code>:</p>
-<div class="sourceCode" id="cb2"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb2-1" data-line-number="1">Q &lt;-<span class="st"> </span><span class="kw">qProb.3d</span>(uerw, sim.locs, <span class="dt">parallel =</span> <span class="ot">TRUE</span>)</a>
-<a class="sourceLine" id="cb2-2" data-line-number="2">cerwList &lt;-<span class="st"> </span><span class="kw">reproduce.track.3d</span>(<span class="dt">n.sim =</span> <span class="dv">100</span>, niclas, <span class="dt">DEM =</span> dem, <span class="dt">parallel =</span> <span class="ot">TRUE</span>)</a></code></pre></div>
+<div class="sourceCode" id="cb2"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb2-1"><a href="#cb2-1" aria-hidden="true"></a>Q &lt;-<span class="st"> </span><span class="kw">qProb.3d</span>(uerw, sim.locs, <span class="dt">parallel =</span> <span class="ot">TRUE</span>)</span>
+<span id="cb2-2"><a href="#cb2-2" aria-hidden="true"></a>cerwList &lt;-<span class="st"> </span><span class="kw">reproduce.track.3d</span>(<span class="dt">n.sim =</span> <span class="dv">100</span>, niclas, <span class="dt">DEM =</span> dem, <span class="dt">parallel =</span> <span class="ot">TRUE</span>)</span></code></pre></div>
 <p>And also for <code>n.sim.uncond.3d()</code>:</p>
-<div class="sourceCode" id="cb3"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb3-1" data-line-number="1">cerwList &lt;-<span class="st"> </span><span class="kw">n.sim.cond.3d</span>(<span class="dt">n.sim =</span> <span class="dv">100</span>, sim.locs, <span class="dt">start=</span>start, <span class="dt">end=</span>end,<span class="dt">a0 =</span> a0, <span class="dt">g0 =</span> g0,</a>
-<a class="sourceLine" id="cb3-2" data-line-number="2">                      <span class="dt">densities=</span>P, <span class="dt">qProbs=</span>Q, <span class="dt">DEM =</span> dem, <span class="dt">parallel =</span> <span class="ot">TRUE</span>)</a></code></pre></div>
+<div class="sourceCode" id="cb3"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb3-1"><a href="#cb3-1" aria-hidden="true"></a>cerwList &lt;-<span class="st"> </span><span class="kw">n.sim.cond.3d</span>(<span class="dt">n.sim =</span> <span class="dv">100</span>, sim.locs, <span class="dt">start=</span>start, <span class="dt">end=</span>end,<span class="dt">a0 =</span> a0, <span class="dt">g0 =</span> g0,</span>
+<span id="cb3-2"><a href="#cb3-2" aria-hidden="true"></a>                      <span class="dt">densities=</span>P, <span class="dt">qProbs=</span>Q, <span class="dt">DEM =</span> dem, <span class="dt">parallel =</span> <span class="ot">TRUE</span>)</span></code></pre></div>
 <p>Alternativly the number of nodes in the cluster can be specified by passing a number to the function: <code>parallel = 4</code>. In this case a fork or PSOCK cluster with 4 nodes will be used. The maximum number of nodes is not allowed to be larger than the number of available cores (Hyper Threading included).</p>
-<div class="sourceCode" id="cb4"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb4-1" data-line-number="1">cerwList &lt;-<span class="st"> </span><span class="kw">n.sim.cond.3d</span>(<span class="dt">n.sim =</span> <span class="dv">100</span>, sim.locs, <span class="dt">start=</span>start, <span class="dt">end=</span>end,<span class="dt">a0 =</span> a0, <span class="dt">g0 =</span> g0,</a>
-<a class="sourceLine" id="cb4-2" data-line-number="2">                      <span class="dt">densities=</span>P, <span class="dt">qProbs=</span>Q, <span class="dt">DEM =</span> dem, <span class="dt">parallel =</span> <span class="dv">4</span>)</a></code></pre></div>
+<div class="sourceCode" id="cb4"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb4-1"><a href="#cb4-1" aria-hidden="true"></a>cerwList &lt;-<span class="st"> </span><span class="kw">n.sim.cond.3d</span>(<span class="dt">n.sim =</span> <span class="dv">100</span>, sim.locs, <span class="dt">start=</span>start, <span class="dt">end=</span>end,<span class="dt">a0 =</span> a0, <span class="dt">g0 =</span> g0,</span>
+<span id="cb4-2"><a href="#cb4-2" aria-hidden="true"></a>                      <span class="dt">densities=</span>P, <span class="dt">qProbs=</span>Q, <span class="dt">DEM =</span> dem, <span class="dt">parallel =</span> <span class="dv">4</span>)</span></code></pre></div>
 <p><strong>Note:</strong> If only a few tracks are simulated and the track length is short <code>sim.locs &lt; 30</code>, then it is faster in many cases to stay with the single core version of the function, especially on Windows systems, where setting up clusters takes some time.</p>
 
 

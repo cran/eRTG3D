@@ -1,44 +1,57 @@
 <!DOCTYPE html>
 
-<html xmlns="http://www.w3.org/1999/xhtml">
+<html>
 
 <head>
 
 <meta charset="utf-8" />
-<meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
 <meta name="generator" content="pandoc" />
 <meta http-equiv="X-UA-Compatible" content="IE=EDGE" />
 
-<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="viewport" content="width=device-width, initial-scale=1" />
 
 
 
 <title>Verification of results</title>
 
+<script>// Pandoc 2.9 adds attributes on both header and div. We remove the former (to
+// be compatible with the behavior of Pandoc < 2.8).
+document.addEventListener('DOMContentLoaded', function(e) {
+  var hs = document.querySelectorAll("div.section[class*='level'] > :first-child");
+  var i, h, a;
+  for (i = 0; i < hs.length; i++) {
+    h = hs[i];
+    if (!/^h[1-6]$/i.test(h.tagName)) continue;  // it should be a header h1-h6
+    a = h.attributes;
+    while (a.length > 0) h.removeAttribute(a[0].name);
+  }
+});
+</script>
 
 
 <style type="text/css">code{white-space: pre;}</style>
 <style type="text/css" data-origin="pandoc">
-a.sourceLine { display: inline-block; line-height: 1.25; }
-a.sourceLine { pointer-events: none; color: inherit; text-decoration: inherit; }
-a.sourceLine:empty { height: 1.2em; }
-.sourceCode { overflow: visible; }
-code.sourceCode { white-space: pre; position: relative; }
+pre > code.sourceCode { white-space: pre; position: relative; }
+pre > code.sourceCode > span { display: inline-block; line-height: 1.25; }
+pre > code.sourceCode > span:empty { height: 1.2em; }
+code.sourceCode > span { color: inherit; text-decoration: inherit; }
 div.sourceCode { margin: 1em 0; }
 pre.sourceCode { margin: 0; }
 @media screen {
 div.sourceCode { overflow: auto; }
 }
 @media print {
-code.sourceCode { white-space: pre-wrap; }
-a.sourceLine { text-indent: -1em; padding-left: 1em; }
+pre > code.sourceCode { white-space: pre-wrap; }
+pre > code.sourceCode > span { text-indent: -5em; padding-left: 5em; }
 }
-pre.numberSource a.sourceLine
-  { position: relative; left: -4em; }
-pre.numberSource a.sourceLine::before
-  { content: attr(data-line-number);
+pre.numberSource code
+  { counter-reset: source-line 0; }
+pre.numberSource code > span
+  { position: relative; left: -4em; counter-increment: source-line; }
+pre.numberSource code > span > a:first-child::before
+  { content: counter(source-line);
     position: relative; left: -1em; text-align: right; vertical-align: baseline;
-    border: none; pointer-events: all; display: inline-block;
+    border: none; display: inline-block;
     -webkit-touch-callout: none; -webkit-user-select: none;
     -khtml-user-select: none; -moz-user-select: none;
     -ms-user-select: none; user-select: none;
@@ -47,9 +60,9 @@ pre.numberSource a.sourceLine::before
   }
 pre.numberSource { margin-left: 3em; border-left: 1px solid #aaaaaa;  padding-left: 4px; }
 div.sourceCode
-  {  }
+  {   }
 @media screen {
-a.sourceLine::before { text-decoration: underline; }
+pre > code.sourceCode > span > a:first-child::before { text-decoration: underline; }
 }
 code span.al { color: #ff0000; font-weight: bold; } /* Alert */
 code span.an { color: #60a0b0; font-weight: bold; font-style: italic; } /* Annotation */
@@ -116,9 +129,6 @@ padding-right: 2em;
 font-family: "Open Sans", "Helvetica Neue", Helvetica, Arial, sans-serif;
 font-size: 14px;
 line-height: 1.35;
-}
-#header {
-text-align: center;
 }
 #TOC {
 clear: both;
@@ -287,7 +297,8 @@ code > span.st { color: #d14; }
 code > span.co { color: #888888; font-style: italic; } 
 code > span.ot { color: #007020; } 
 code > span.al { color: #ff0000; font-weight: bold; } 
-code > span.fu { color: #900; font-weight: bold; }  code > span.er { color: #a61717; background-color: #e3d2d2; } 
+code > span.fu { color: #900; font-weight: bold; } 
+code > span.er { color: #a61717; background-color: #e3d2d2; } 
 </style>
 
 
@@ -310,30 +321,30 @@ text-align: justify}
 </style>
 <div id="reproduce-a-trajectory" class="section level2">
 <h2>Reproduce a trajectory</h2>
-<div class="sourceCode" id="cb1"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb1-1" data-line-number="1">cerw &lt;-<span class="st"> </span><span class="kw">reproduce.track.3d</span>(niclas, <span class="dt">DEM =</span> dem)</a></code></pre></div>
+<div class="sourceCode" id="cb1"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb1-1"><a href="#cb1-1" aria-hidden="true"></a>cerw &lt;-<span class="st"> </span><span class="kw">reproduce.track.3d</span>(niclas, <span class="dt">DEM =</span> dem)</span></code></pre></div>
 <p>The simulated trajectories result should be tested statistically. The first argument of the <code>test.verification.3d()</code> function is the original track to be tested against. The second argument is either a single track or a list of multiple tracks.</p>
 </div>
 <div id="kolmogorov-smirnov-test" class="section level2">
 <h2>Kolmogorov-Smirnov test</h2>
 <p>By setting <code>test = &quot;ks&quot;</code> a two-sample Kolmogorov-Smirnov test is carried out on the distributions of turn angles, lift angles and step lengths of the two tracks.</p>
-<div class="sourceCode" id="cb2"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb2-1" data-line-number="1">tests &lt;-<span class="st"> </span><span class="kw">test.verification.3d</span>(niclas, cerw, <span class="dt">test =</span> <span class="st">&quot;ks&quot;</span>, <span class="dt">plot =</span> <span class="ot">FALSE</span>)</a>
-<a class="sourceLine" id="cb2-2" data-line-number="2"><span class="co">#&gt;   |*** Two-sample Kolmogorov-Smirnov test ***</span></a>
-<a class="sourceLine" id="cb2-3" data-line-number="3"><span class="co">#&gt;   |H0: Probability distributions do not differ significantly</span></a>
-<a class="sourceLine" id="cb2-4" data-line-number="4"><span class="co">#&gt;   |H1: Probability distributions differ significantly</span></a>
-<a class="sourceLine" id="cb2-5" data-line-number="5"><span class="co">#&gt;   |Turn angle  - p-value: 0.958 &gt; 0.05, *H0*, autodifferences - p-value: 0.951 &gt; 0.05, *H0*</span></a>
-<a class="sourceLine" id="cb2-6" data-line-number="6"><span class="co">#&gt;   |Lift angle  - p-value: 0.239 &gt; 0.05, *H0*, autodifferences - p-value: 0.03 &lt; 0.05, *H1*</span></a>
-<a class="sourceLine" id="cb2-7" data-line-number="7"><span class="co">#&gt;   |Step length - p-value: 0.958 &gt; 0.05, *H0*, autodifferences - p-value: 0.998 &gt; 0.05, *H0*</span></a></code></pre></div>
+<div class="sourceCode" id="cb2"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb2-1"><a href="#cb2-1" aria-hidden="true"></a>tests &lt;-<span class="st"> </span><span class="kw">test.verification.3d</span>(niclas, cerw, <span class="dt">test =</span> <span class="st">&quot;ks&quot;</span>, <span class="dt">plot =</span> <span class="ot">FALSE</span>)</span>
+<span id="cb2-2"><a href="#cb2-2" aria-hidden="true"></a><span class="co">#&gt;   |*** Two-sample Kolmogorov-Smirnov test ***</span></span>
+<span id="cb2-3"><a href="#cb2-3" aria-hidden="true"></a><span class="co">#&gt;   |H0: Probability distributions do not differ significantly</span></span>
+<span id="cb2-4"><a href="#cb2-4" aria-hidden="true"></a><span class="co">#&gt;   |H1: Probability distributions differ significantly</span></span>
+<span id="cb2-5"><a href="#cb2-5" aria-hidden="true"></a><span class="co">#&gt;   |Turn angle  - p-value: 0.958 &gt; 0.05, *H0*, autodifferences - p-value: 0.951 &gt; 0.05, *H0*</span></span>
+<span id="cb2-6"><a href="#cb2-6" aria-hidden="true"></a><span class="co">#&gt;   |Lift angle  - p-value: 0.239 &gt; 0.05, *H0*, autodifferences - p-value: 0.03 &lt; 0.05, *H1*</span></span>
+<span id="cb2-7"><a href="#cb2-7" aria-hidden="true"></a><span class="co">#&gt;   |Step length - p-value: 0.958 &gt; 0.05, *H0*, autodifferences - p-value: 0.998 &gt; 0.05, *H0*</span></span></code></pre></div>
 </div>
 <div id="one-sample-t-test" class="section level2">
 <h2>One-sample t-test</h2>
 <p>By choosing <code>test = &quot;ttest&quot;</code> a random sample, without replacement is taken from the longer track, to shorten it to the length of the longer track. The order of the shorter track is also sampled randomly. Then the two randomly ordered vectors of turn angles, lift angles and step lengths are substracted from each other. If the both tracks stem from the same distributions the the mean deviatio should tend to towards zero, therefore the difference is tested two-sided against mu = 0 with a one-sample t-test.</p>
-<div class="sourceCode" id="cb3"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb3-1" data-line-number="1">tests &lt;-<span class="st"> </span><span class="kw">test.verification.3d</span>(niclas, cerw, <span class="dt">test =</span> <span class="st">&quot;ttest&quot;</span>, <span class="dt">plot =</span> <span class="ot">FALSE</span>)</a>
-<a class="sourceLine" id="cb3-2" data-line-number="2"><span class="co">#&gt;   |*** One Sample t-test ***</span></a>
-<a class="sourceLine" id="cb3-3" data-line-number="3"><span class="co">#&gt;   |H0: Difference between tracks does not differ significantly from 0</span></a>
-<a class="sourceLine" id="cb3-4" data-line-number="4"><span class="co">#&gt;   |H1: Difference between tracks differs significantly from 0</span></a>
-<a class="sourceLine" id="cb3-5" data-line-number="5"><span class="co">#&gt;   |Turn angle  - p-value: 0.527 &gt; 0.05, *H0*</span></a>
-<a class="sourceLine" id="cb3-6" data-line-number="6"><span class="co">#&gt;   |Lift angle  - p-value: 0.898 &gt; 0.05, *H0*</span></a>
-<a class="sourceLine" id="cb3-7" data-line-number="7"><span class="co">#&gt;   |Step length - p-value: 0.704 &gt; 0.05, *H0*</span></a></code></pre></div>
+<div class="sourceCode" id="cb3"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb3-1"><a href="#cb3-1" aria-hidden="true"></a>tests &lt;-<span class="st"> </span><span class="kw">test.verification.3d</span>(niclas, cerw, <span class="dt">test =</span> <span class="st">&quot;ttest&quot;</span>, <span class="dt">plot =</span> <span class="ot">FALSE</span>)</span>
+<span id="cb3-2"><a href="#cb3-2" aria-hidden="true"></a><span class="co">#&gt;   |*** One Sample t-test ***</span></span>
+<span id="cb3-3"><a href="#cb3-3" aria-hidden="true"></a><span class="co">#&gt;   |H0: Difference between tracks does not differ significantly from 0</span></span>
+<span id="cb3-4"><a href="#cb3-4" aria-hidden="true"></a><span class="co">#&gt;   |H1: Difference between tracks differs significantly from 0</span></span>
+<span id="cb3-5"><a href="#cb3-5" aria-hidden="true"></a><span class="co">#&gt;   |Turn angle  - p-value: 0.527 &gt; 0.05, *H0*</span></span>
+<span id="cb3-6"><a href="#cb3-6" aria-hidden="true"></a><span class="co">#&gt;   |Lift angle  - p-value: 0.898 &gt; 0.05, *H0*</span></span>
+<span id="cb3-7"><a href="#cb3-7" aria-hidden="true"></a><span class="co">#&gt;   |Step length - p-value: 0.704 &gt; 0.05, *H0*</span></span></code></pre></div>
 </div>
 
 
