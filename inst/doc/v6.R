@@ -4,16 +4,12 @@ options(knitr.table.format = "html", rmarkdown.html_vignette.check_title = FALSE
 
 library(eRTG3D)
 set.seed(123)
-WGS84 <- "+init=epsg:4326"
-LV95 <- "+init=epsg:2056"
-track.wgs84 <- transformCRS.3d(niclas, fromCRS=LV95, toCRS=WGS84)[ ,1:3]
+track.wgs84 <- transformCRS.3d(niclas, fromCRS=2056, toCRS=4326)[ ,1:3]
 
 ## ----eval=TRUE----------------------------------------------------------------
 head(track.wgs84)
 
 ## ----eval=TRUE----------------------------------------------------------------
-WGS84 <- "+init=epsg:4326"
-LV95 <- "+init=epsg:2056"
-track <- transformCRS.3d(track.wgs84, fromCRS=WGS84, toCRS=LV95)
+track <- transformCRS.3d(track.wgs84, fromCRS=4326, toCRS=2056)
 head(track)
 

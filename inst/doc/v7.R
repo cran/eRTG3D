@@ -6,8 +6,7 @@ library(eRTG3D)
 set.seed(123)
 
 ## ----eval=TRUE, fig.height=5, fig.width=7-------------------------------------
-LV95 <- "+init=epsg:2056"
-niclas <- track2sf.3d(niclas, CRS = LV95)
+niclas <- track2sf.3d(niclas, CRS = 2056)
 is.sf.3d(niclas)
 head(niclas, 3)
 
