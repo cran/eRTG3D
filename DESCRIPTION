@@ -1,6 +1,6 @@
 Package: eRTG3D
 Title: Empirically Informed Random Trajectory Generation in 3-D
-Version: 0.6.4
+Version: 0.7.0
 Authors@R: c(
     person("Merlin", "Unterfinger", email = "info@munterfinger.ch", role = c("aut", "cre"), comment = c(ORCID = "0000-0003-2020-2366")),
     person("Kamran", "Safi", email = "ksafi@orn.mpg.de", role = c("ctb", "ths")),
@@ -26,10 +26,10 @@ Suggests: knitr (>= 1.23), pander (>= 0.6.3), gridExtra (>= 2.3), plyr
         testthat (>= 2.1.0), covr (>= 3.2.1)
 VignetteBuilder: knitr
 NeedsCompilation: no
-Packaged: 2021-10-02 14:46:36 UTC; munterfi
+Packaged: 2022-02-23 14:43:28 UTC; munterfi
 Author: Merlin Unterfinger [aut, cre] (<https://orcid.org/0000-0003-2020-2366>),
   Kamran Safi [ctb, ths],
   George Technitis [ctb, ths],
   Robert Weibel [ths]
 Repository: CRAN
-Date/Publication: 2021-10-02 15:10:05 UTC
+Date/Publication: 2022-02-25 12:10:05 UTC
